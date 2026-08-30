@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!-- Adds a "Room Helper" tab to the Architect menu holding the two tools. The
+       Designator classes are instantiated by the game via their parameterless
+       constructors. -->
+  <DesignationCategoryDef>
+    <defName>RoomHelper</defName>
+    <label>room helper</label>
+    <order>360</order>
+    <specialDesignatorClasses>
+      <li>RoomHelper.Designator_PlanRoomMenu</li>
+      <li>RoomHelper.Designator_AutoPlaceRoomMenu</li>
+    </specialDesignatorClasses>
+  </DesignationCategoryDef>
+
+</Defs>

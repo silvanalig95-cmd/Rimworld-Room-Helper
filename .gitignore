@@ -1,0 +1,14 @@
+# Build intermediates
+Source/**/obj/
+Source/**/bin/
+*.user
+*.suo
+.vs/
+
+# Keep the shipped mod assembly (built by CI) tracked:
+!Assemblies/
+!Assemblies/*.dll
+
+# OS cruft
+.DS_Store
+Thumbs.db

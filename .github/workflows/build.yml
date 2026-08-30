@@ -1,0 +1,51 @@
+name: Build mod
+
+on:
+  push:
+    branches: [ "claude/rimworld-room-building-mod-je3h1a", "main" ]
+    paths-ignore:
+      - "Assemblies/**"
+      - "**/*.md"
+      - "About/**"
+      - "Textures/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore & build (Release)
+        run: dotnet build Source/RoomHelper/RoomHelper.csproj -c Release -v minimal
+
+      - name: Show output
+        run: ls -la Assemblies/
+
+      - name: Upload assembly artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RoomHelper-Assemblies
+          path: Assemblies/*.dll
+          if-no-files-found: error
+
+      - name: Commit built assembly back to the branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f Assemblies/RoomHelper.dll
+          if git diff --cached --quiet; then
+            echo "No assembly change to commit."
+          else
+            git commit -m "CI: build RoomHelper.dll [skip ci]"
+            git push origin HEAD:${{ github.ref_name }}
+          fi

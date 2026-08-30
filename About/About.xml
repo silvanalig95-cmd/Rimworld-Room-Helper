@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <packageId>silvanalig.roomhelper</packageId>
+  <name>Room Helper</name>
+  <author>silvanalig95</author>
+  <url>https://github.com/silvanalig95-cmd/Rimworld-Room-Helper</url>
+  <supportedVersions>
+    <li>1.6</li>
+  </supportedVersions>
+  <description>Room Helper takes the layout guesswork out of building.
+
+Pick a room type  bedroom, barracks, dining room, kitchen, hospital, prison cell, storage or rec room  and either drag out an area or just click a rough spot and let the mod find one for you. Room Helper lays down the walls, a door, the flooring and the furniture as ordinary blueprints, and your colonists build the whole thing with their normal construction jobs.
+
+You decide what you need. Your colonists figure out where it goes and put it together. No more staring at an empty patch of dirt wondering how big to make the bedroom.
+
+FEATURES
+ A "Room Helper" tab in the Architect menu with two tools:
+   - Plan room: choose a type, then drag out the footprint.
+   - Auto-place room: choose a type, then click roughly where you want it and the mod finds the nearest empty, buildable spot that fits.
+ Data-driven room templates  add or tweak rooms with a simple XML file, no coding required.
+ Missing furniture (renamed defs, DLC content you don't own) is skipped gracefully instead of breaking.
+ No Harmony patches and no other mod dependencies. Safe to add or remove at any time.
+
+Everything it places is a normal blueprint, so it plays nicely with the rest of the game  reroof, deconstruct, or redecorate exactly as you always would.</description>
+</ModMetaData>

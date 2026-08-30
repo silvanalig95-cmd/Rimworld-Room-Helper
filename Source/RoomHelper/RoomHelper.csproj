@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>RoomHelper</AssemblyName>
+    <RootNamespace>RoomHelper</RootNamespace>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+
+    <!-- Emit the built mod assembly straight into the mod's Assemblies folder. -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>$(MSBuildProjectDirectory)/../../Assemblies/</OutputPath>
+
+    <!-- RimWorld only needs the DLL: no pdb, no bundled reference assemblies. -->
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <Deterministic>true</Deterministic>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>1.0.0</Version>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+    <NoWarn>$(NoWarn);MSB3277</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- RimWorld 1.6 reference assemblies (Assembly-CSharp, UnityEngine, ...).
+         Reference-only: not copied into the output. -->
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4871" />
+    <!-- Lets net472 build on machines/CI without a full .NET Framework install. -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

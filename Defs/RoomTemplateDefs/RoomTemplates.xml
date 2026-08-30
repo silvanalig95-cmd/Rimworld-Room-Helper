@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!-- Every piece of furniture is resolved by defName at run time. If the primary
+       def is missing (renamed, or from a DLC you don't own) the <alternates> are
+       tried, and anything still unresolved with optional=true is quietly skipped.
+       That keeps templates working across game versions and mod setups. -->
+
+  <!-- ============================ BEDROOM ============================ -->
+  <RoomHelper.RoomTemplateDef>
+    <defName>RH_Bedroom</defName>
+    <label>bedroom</label>
+    <order>10</order>
+    <minWidth>5</minWidth>
+    <minHeight>5</minHeight>
+    <defaultWidth>7</defaultWidth>
+    <defaultHeight>7</defaultHeight>
+    <wallStuff><li>WoodLog</li></wallStuff>
+    <doorStuff><li>WoodLog</li></doorStuff>
+    <floorDef>WoodPlankFloor</floorDef>
+    <furniture>
+      <li><thingDef>Bed</thingDef><placement>AlongWall</placement><count>1</count></li>
+      <li><thingDef>EndTable</thingDef><placement>AdjacentToLast</placement><count>1</count><optional>true</optional></li>
+      <li><thingDef>Dresser</thingDef><placement>AlongWall</placement><count>1</count><optional>true</optional></li>
+      <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>1</count><optional>true</optional></li>
+    </furniture>
+  </RoomHelper.RoomTemplateDef>
+
+  <!-- ============================ BARRACKS ============================ -->
+  <RoomHelper.RoomTemplateDef>
+    <defName>RH_Barracks</defName>
+    <label>barracks</label>
+    <order>20</order>
+    <minWidth>7</minWidth>
+    <minHeight>7</minHeight>
+    <defaultWidth>11</defaultWidth>
+    <defaultHeight>9</defaultHeight>
+    <wallStuff><li>WoodLog</li></wallStuff>
+    <doorStuff><li>WoodLog</li></doorStuff>
+    <floorDef>WoodPlankFloor</floorDef>
+    <furniture>
+      <li><thingDef>Bed</thingDef><placement>AlongWall</placement><count>4</count></li>
+      <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>2</count><optional>true</optional></li>
+    </furniture>
+  </RoomHelper.RoomTemplateDef>
+
+  <!-- ========================== DINING ROOM ========================== -->
+  <RoomHelper.RoomTemplateDef>
+    <defName>RH_DiningRoom</defName>
+    <label>dining room</label>
+    <order>30</order>
+    <minWidth>7</minWidth>
+    <minHeight>7</minHeight>
+    <defaultWidth>9</defaultWidth>
+    <defaultHeight>9</defaultHeight>
+    <wallStuff><li>WoodLog</li></wallStuff>
+    <doorStuff><li>WoodLog</li></doorStuff>
+    <floorDef>WoodPlankFloor</floorDef>
+    <furniture>
+      <li>
+        <thingDef>Table2x2c</thingDef>
+        <alternates><li>Table1x2c</li><li>Table3x3c</li></alternates>
+        <placement>Center</placement><count>1</count>
+      </li>
+      <li><thingDef>DiningChair</thingDef><alternates><li>Stool</li></alternates><placement>AdjacentToLast</placement><count>4</count></li>
+      <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>2</count><optional>true</optional></li>
+    </furniture>
+  </RoomHelper.RoomTemplateDef>
+
+  <!-- ============================ KITCHEN ============================ -->
+  <RoomHelper.RoomTemplateDef>
+    <defName>RH_Kitchen</defName>
+    <label>kitchen</label>
+    <order>40</order>
+    <minWidth>6</minWidth>
+    <minHeight>6</minHeight>
+    <defaultWidth>9</defaultWidth>
+    <defaultHeight>7</defaultHeight>
+    <wallStuff><li>WoodLog</li></wallStuff>
+    <doorStuff><li>WoodLog</li></doorStuff>
+    <floorDef>Concrete</floorDef>
+    <furniture>
+      <li><thingDef>ElectricStove</thingDef><alternates><li>FueledStove</li></alternates><placement>AlongWall</placement><count>1</count></li>
+      <li><thingDef>ButcherTable</thingDef><placement>AlongWall</placement><count>1</count><optional>true</optional></li>
+      <li><thingDef>Shelf</thingDef><placement>AlongWall</placement><count>2</count><optional>true</optional></li>
+      <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>1</count><optional>true</optional></li>
+    </furniture>
+  </RoomHelper.RoomTemplateDef>
+
+  <!-- =========================== HOSPITAL =========================== -->
+  <RoomHelper.RoomTemplateDef>
+    <defName>RH_Hospital</defName>
+    <label>hospital</label>
+    <order>50</order>
+    <minWidth>7</minWidth>
+    <minHeight>7</minHeight>
+    <defaultWidth>9</defaultWidth>
+    <defaultHeight>9</defaultHeight>
+    <wallStuff><li>WoodLog</li></wallStuff>
+    <doorStuff><li>WoodLog</li></doorStuff>
+    <floorDef>SterileTile</floorDef>
+    <furniture>
+      <li><thingDef>HospitalBed</thingDef><alternates><li>Bed</li></alternates><placement>AlongWall</placement><count>3</count></li>
+      <li><thingDef>EndTable</thingDef><placement>AlongWall</placement><count>3</count><optional>true</optional></li>
+      <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>2</count><optional>true</optional></li>
+    </furniture>
+  </RoomHelper.RoomTemplateDef>
+
+  <!-- ========================== PRISON CELL ========================== -->
+  <!-- Places a normal bedroom; after it is built, click the bed and tick
+       "For prisoners" to turn the room into a prison cell. -->
+  <RoomHelper.RoomTemplateDef>
+    <defName>RH_PrisonCell</defName>
+    <label>prison cell</label>
+    <order>60</order>
+    <minWidth>5</minWidth>
+    <minHeight>5</minHeight>
+    <defaultWidth>6</defaultWidth>
+    <defaultHeight>6</defaultHeight>
+    <wallStuff><li>WoodLog</li></wallStuff>
+    <doorStuff><li>WoodLog</li></doorStuff>
+    <floorDef>WoodPlankFloor</floorDef>
+    <furniture>
+      <li><thingDef>Bed</thingDef><placement>AlongWall</placement><count>1</count></li>
+      <li><thingDef>EndTable</thingDef><placement>AlongWall</placement><count>1</count><optional>true</optional></li>
+      <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>1</count><optional>true</optional></li>
+    </furniture>
+  </RoomHelper.RoomTemplateDef>
+
+  <!-- =========================== STORAGE =========================== -->
+  <RoomHelper.RoomTemplateDef>
+    <defName>RH_Storage</defName>
+    <label>storage room</label>
+    <order>70</order>
+    <minWidth>6</minWidth>
+    <minHeight>6</minHeight>
+    <defaultWidth>9</defaultWidth>
+    <defaultHeight>9</defaultHeight>
+    <wallStuff><li>WoodLog</li></wallStuff>
+    <doorStuff><li>WoodLog</li></doorStuff>
+    <floorDef>Concrete</floorDef>
+    <furniture>
+      <li><thingDef>Shelf</thingDef><placement>AlongWall</placement><count>6</count><optional>true</optional></li>
+      <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>1</count><optional>true</optional></li>
+    </furniture>
+  </RoomHelper.RoomTemplateDef>
+
+  <!-- =========================== REC ROOM =========================== -->
+  <RoomHelper.RoomTemplateDef>
+    <defName>RH_RecRoom</defName>
+    <label>rec room</label>
+    <order>80</order>
+    <minWidth>7</minWidth>
+    <minHeight>7</minHeight>
+    <defaultWidth>9</defaultWidth>
+    <defaultHeight>9</defaultHeight>
+    <wallStuff><li>WoodLog</li></wallStuff>
+    <doorStuff><li>WoodLog</li></doorStuff>
+    <floorDef>WoodPlankFloor</floorDef>
+    <furniture>
+      <li>
+        <thingDef>Table2x2c</thingDef>
+        <alternates><li>Table1x2c</li><li>Table3x3c</li></alternates>
+        <placement>Center</placement><count>1</count><optional>true</optional>
+      </li>
+      <li><thingDef>DiningChair</thingDef><alternates><li>Stool</li></alternates><placement>AdjacentToLast</placement><count>2</count><optional>true</optional></li>
+      <li>
+        <thingDef>TubeTelevision</thingDef>
+        <alternates><li>FlatscreenTelevision</li><li>HorseshoesPin</li></alternates>
+        <placement>AlongWall</placement><count>1</count><optional>true</optional>
+      </li>
+      <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>2</count><optional>true</optional></li>
+    </furniture>
+  </RoomHelper.RoomTemplateDef>
+
+  <!-- =========================== WORKSHOP =========================== -->
+  <RoomHelper.RoomTemplateDef>
+    <defName>RH_Workshop</defName>
+    <label>workshop</label>
+    <order>90</order>
+    <minWidth>7</minWidth>
+    <minHeight>7</minHeight>
+    <defaultWidth>11</defaultWidth>
+    <defaultHeight>9</defaultHeight>
+    <wallStuff><li>WoodLog</li></wallStuff>
+    <doorStuff><li>WoodLog</li></doorStuff>
+    <floorDef>Concrete</floorDef>
+    <furniture>
+      <li>
+        <thingDef>TableStonecutter</thingDef>
+        <alternates><li>ElectricSmithy</li><li>FueledSmithy</li></alternates>
+        <placement>AlongWall</placement><count>1</count><optional>true</optional>
+      </li>
+      <li>
+        <thingDef>HandTailoringBench</thingDef>
+        <alternates><li>ElectricTailoringBench</li></alternates>
+        <placement>AlongWall</placement><count>1</count><optional>true</optional>
+      </li>
+      <li><thingDef>Shelf</thingDef><placement>AlongWall</placement><count>2</count><optional>true</optional></li>
+      <li><thingDef>ToolCabinet</thingDef><placement>Free</placement><count>1</count><optional>true</optional></li>
+      <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>2</count><optional>true</optional></li>
+    </furniture>
+  </RoomHelper.RoomTemplateDef>
+
+  <!-- ========================= RESEARCH LAB ========================= -->
+  <RoomHelper.RoomTemplateDef>
+    <defName>RH_ResearchLab</defName>
+    <label>research lab</label>
+    <order>100</order>
+    <minWidth>6</minWidth>
+    <minHeight>6</minHeight>
+    <defaultWidth>9</defaultWidth>
+    <defaultHeight>7</defaultHeight>
+    <wallStuff><li>WoodLog</li></wallStuff>
+    <doorStuff><li>WoodLog</li></doorStuff>
+    <floorDef>WoodPlankFloor</floorDef>
+    <furniture>
+      <li>
+        <thingDef>SimpleResearchBench</thingDef>
+        <alternates><li>HiTechResearchBench</li></alternates>
+        <placement>AlongWall</placement><count>1</count>
+      </li>
+      <li><thingDef>ToolCabinet</thingDef><placement>Free</placement><count>1</count><optional>true</optional></li>
+      <li><thingDef>Shelf</thingDef><placement>AlongWall</placement><count>1</count><optional>true</optional></li>
+      <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>1</count><optional>true</optional></li>
+    </furniture>
+  </RoomHelper.RoomTemplateDef>
+
+</Defs>
