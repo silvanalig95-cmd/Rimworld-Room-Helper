@@ -103,7 +103,7 @@ namespace RoomHelper
                 // A neighbouring room planned earlier may already have queued a wall
                 // here. Cancelling an un-built blueprint costs nothing and is what lets
                 // two rooms planned at different times still end up connected.
-                ClearWallBlueprintAt(map, cell);
+                ClearBlockingBlueprintAt(map, cell, doorDef);
                 if (TryPlaceBuilding(doorDef, cell, Rot4.North, doorStuff, map, faction))
                 {
                     result.doors++;
@@ -113,22 +113,29 @@ namespace RoomHelper
             return result;
         }
 
-        // Cancels an un-built building blueprint at <cell> so a door can go there.
+        // Cancels an un-built building blueprint at <cell> so a <wanted> can go there.
         // Only blueprints are touched  anything already constructed is left alone.
-        private static void ClearWallBlueprintAt(Map map, IntVec3 cell)
+        //
+        // A blueprint for <wanted> itself is deliberately spared. This runs on every
+        // materialise pass, and destroying the door blueprint just to lay it down again
+        // would cancel the job out from under whichever colonist had walked over to
+        // build it, over and over.
+        private static void ClearBlockingBlueprintAt(Map map, IntVec3 cell, ThingDef wanted)
         {
             Thing[] snapshot = map.thingGrid.ThingsListAtFast(cell).ToArray();
             foreach (Thing t in snapshot)
             {
-                if (t.Destroyed)
+                if (t.Destroyed || !t.def.IsBlueprint)
                 {
                     continue;
                 }
-                // Floor blueprints build a TerrainDef; leave those be.
-                if (t.def.IsBlueprint && t.def.entityDefToBuild is ThingDef)
+                // Floor blueprints build a TerrainDef, not a ThingDef; leave those be.
+                ThingDef building = t.def.entityDefToBuild as ThingDef;
+                if (building == null || building == wanted)
                 {
-                    t.Destroy(DestroyMode.Cancel);
+                    continue;
                 }
+                t.Destroy(DestroyMode.Cancel);
             }
         }
 

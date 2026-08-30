@@ -108,7 +108,10 @@ namespace RoomHelper
             // Alongside the way in from outside, every wall shared with a neighbouring
             // room gets a door, so you can walk the base without stepping outdoors.
             List<IntVec3> doors = ConnectingDoorCells(architect);
-            doors.Add(doorCell);
+            if (!doors.Contains(doorCell))
+            {
+                doors.Add(doorCell);
+            }
 
             // 1. Mine out anything in the way: the interior, and every doorway.
             //    Perimeter rock is left standing  in a mountain room the natural rock

@@ -17,26 +17,38 @@ of dirt wondering how big to make the bedroom.
 
 ## The base architect
 
-Left to itself, the architect quietly does what a good colony planner would:
+One of your colonists takes the job on — whoever has the best head for Intellectual and
+Construction — and quietly does what a good colony planner would:
 
 1. **Works out what the colony is short of.** One bed per colonist, a dining table per
    six, a stove, hospital beds once you're past four colonists, storage, a rec room, a
    workshop, a research bench. It counts what you've already built *and* what's already
    planned, so it won't nag you about a bedroom that's half-finished.
-2. **Picks a genuinely good spot.** Candidate sites are scored on compactness (keeping
-   the base tight rather than sprawling), adjacency (the kitchen wants to be near the
-   storage room and the dining room), overhead rock, and how much mining it would cost.
-3. **Decides mountain or open ground per site.** Both are scored by the *same* function,
+2. **Picks a genuinely good spot.** Candidate sites are scored on how much wall they'd
+   share with the existing base, compactness, adjacency (the kitchen wants to be near
+   the storage room and the dining room), overhead rock, and mining cost.
+3. **Grows one connected building, not a village of huts.** New rooms sit *flush* against
+   what's already there and share a wall, and every shared wall gets a connecting door —
+   so you can walk the whole base without stepping outdoors. A room whose wall would
+   intrude on another's interior is rejected, and so is one sitting exactly one cell away
+   leaving a dead strip.
+4. **Decides mountain or open ground per site.** Both are scored by the *same* function,
    so the map decides: it digs into rock where there's good rock to dig — free walls,
    overhead cover against drop pods — and builds in the open where there isn't. A slider
    lets you lean one way if you'd rather, but the default is "let the map decide."
-4. **Proposes it to you.** You get a letter and a coloured outline on the map. Open the
-   **Base architect** window to **Approve**, ask for **Elsewhere** (re-roll the location),
-   or **Dismiss**.
-5. **Builds it as the ground frees up.** Approve a room carved into a cliff and the
+5. **Proposes it to you.** You get a letter naming the colonist who drew up the plans, and
+   a coloured outline on the map. Open the **Base architect** window to **Approve**, ask
+   for **Elsewhere** (re-roll the location), or **Dismiss**.
+6. **Builds it as the ground frees up.** Approve a room carved into a cliff and the
    architect designates the rock for mining, drops walls in as cells open up, and only
    lays out the furniture once the interior is genuinely clear — so you don't end up with
    a bed wedged into the one corner that got mined first.
+7. **Runs power to it.** Once a room's interior is down, it traces a conduit back to your
+   nearest existing conduit, battery or generator. If you've no electricity yet it simply
+   waits rather than proposing a generator you can't afford.
+
+Your planner's skill shows in the work: a colonist with a good head for it lays out
+roomier quarters, a colony of beginners gets something merely adequate.
 
 Nothing happens without your say-so unless you want it to — there's a **"Build without
 asking"** toggle if you'd rather it just get on with it.
@@ -108,6 +120,9 @@ Tips:
 - Blue outline = planned on open ground. Amber outline = to be carved out of rock.
 - A mountain room leaves the surrounding rock standing as its walls — that's why it needs
   fewer materials but more mining.
+- Rooms deliberately share walls with their neighbours and get a connecting door, so the
+  base grows as one building. Each room still keeps its own way in from outside, so a
+  half-built wing can never seal your colonists out.
 - **Prison cell** and **barracks** are never auto-proposed (the architect can't know you
   intend to take prisoners, and barracks compete with bedrooms) — place those by hand.
 - After a prison cell is built, click the bed and tick *For prisoners* to convert the room.
@@ -188,10 +203,12 @@ The C# splits into a planning half and an execution half:
 | File | Responsibility |
 |------|----------------|
 | `ColonyNeeds.cs` | What is the colony short of? |
-| `SiteScorer.cs` | Where should it go — and is this a mountain or open-ground site? |
+| `SiteScorer.cs` | Where should it go — mountain or open ground, and how much wall can it share? |
+| `ColonyArchitect.cs` | Which colonist is doing the planning, and how good are they? |
 | `BaseArchitect.cs` | `MapComponent` tying it together: check, propose, materialise |
 | `PlannedRoom.cs` | One planned room; saves with the game, builds incrementally |
 | `RoomPlanner.cs` | Rectangle + template → wall/door/floor/furniture blueprints |
+| `PowerPlanner.cs` | Traces conduits from a finished room back to the grid |
 | `Dialog_BaseArchitect.cs` | Approve / relocate / dismiss UI |
 | `RoomHelperMod.cs` | Mod settings |
 
