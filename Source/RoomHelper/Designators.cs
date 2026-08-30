@@ -95,6 +95,31 @@ namespace RoomHelper
         }
     }
 
+    // Architect-menu button that opens the base architect's control panel, where the
+    // player approves or dismisses the rooms their colonists have proposed.
+    public class Designator_BaseArchitect : Designator
+    {
+        public Designator_BaseArchitect()
+        {
+            defaultLabel = "Base architect";
+            defaultDesc = "Let your colonists plan the base. They work out what the colony is short of, pick a good spot for it — digging into rock or building in the open, whichever the map favours — and propose it for your approval.";
+            icon = DesignatorUtil.Icon("RoomHelper/UI/Architect", "RoomHelper/UI/AutoRoom");
+            useMouseIcon = false;
+        }
+
+        public override AcceptanceReport CanDesignateCell(IntVec3 loc) => false;
+
+        public override void ProcessInput(Event ev)
+        {
+            Map map = Find.CurrentMap;
+            if (map == null)
+            {
+                return;
+            }
+            Find.WindowStack.Add(new Dialog_BaseArchitect(map));
+        }
+    }
+
     // Drag-out-an-area designator bound to one template. Placing works on the bounding
     // rectangle of whatever the player drags.
     public class Designator_PlanRoom : Designator

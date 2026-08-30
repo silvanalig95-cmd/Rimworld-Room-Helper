@@ -24,6 +24,15 @@
       <li><thingDef>Dresser</thingDef><placement>AlongWall</placement><count>1</count><optional>true</optional></li>
       <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>1</count><optional>true</optional></li>
     </furniture>
+    <needCheck>
+      <satisfiedBy><li>Bed</li><li>DoubleBed</li><li>RoyalBed</li></satisfiedBy>
+      <perColonists>1</perColonists>
+      <priority>100</priority>
+      <maxRooms>12</maxRooms>
+      <provides>1</provides>
+      <providesThing>Bed</providesThing>
+    </needCheck>
+    <nearTemplates><li>RH_DiningRoom</li></nearTemplates>
   </RoomHelper.RoomTemplateDef>
 
   <!-- ============================ BARRACKS ============================ -->
@@ -42,6 +51,9 @@
       <li><thingDef>Bed</thingDef><placement>AlongWall</placement><count>4</count></li>
       <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>2</count><optional>true</optional></li>
     </furniture>
+    <!-- Overlaps the bedroom's job, so it is manual-only: otherwise the
+         architect would propose both for the same missing beds. -->
+    <autoPropose>false</autoPropose>
   </RoomHelper.RoomTemplateDef>
 
   <!-- ========================== DINING ROOM ========================== -->
@@ -65,6 +77,16 @@
       <li><thingDef>DiningChair</thingDef><alternates><li>Stool</li></alternates><placement>AdjacentToLast</placement><count>4</count></li>
       <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>2</count><optional>true</optional></li>
     </furniture>
+    <needCheck>
+      <satisfiedBy><li>Table2x2c</li><li>Table1x2c</li><li>Table2x4c</li></satisfiedBy>
+      <perColonists>6</perColonists>
+      <minimumCount>1</minimumCount>
+      <priority>90</priority>
+      <maxRooms>3</maxRooms>
+      <provides>1</provides>
+      <providesThing>Table2x2c</providesThing>
+    </needCheck>
+    <nearTemplates><li>RH_Kitchen</li></nearTemplates>
   </RoomHelper.RoomTemplateDef>
 
   <!-- ============================ KITCHEN ============================ -->
@@ -85,6 +107,16 @@
       <li><thingDef>Shelf</thingDef><placement>AlongWall</placement><count>2</count><optional>true</optional></li>
       <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>1</count><optional>true</optional></li>
     </furniture>
+    <needCheck>
+      <satisfiedBy><li>ElectricStove</li><li>FueledStove</li></satisfiedBy>
+      <minimumCount>1</minimumCount>
+      <perColonists>10</perColonists>
+      <priority>85</priority>
+      <maxRooms>2</maxRooms>
+      <provides>1</provides>
+      <providesThing>ElectricStove</providesThing>
+    </needCheck>
+    <nearTemplates><li>RH_Storage</li><li>RH_DiningRoom</li></nearTemplates>
   </RoomHelper.RoomTemplateDef>
 
   <!-- =========================== HOSPITAL =========================== -->
@@ -104,6 +136,16 @@
       <li><thingDef>EndTable</thingDef><placement>AlongWall</placement><count>3</count><optional>true</optional></li>
       <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>2</count><optional>true</optional></li>
     </furniture>
+    <needCheck>
+      <satisfiedBy><li>HospitalBed</li></satisfiedBy>
+      <minimumCount>2</minimumCount>
+      <minColonists>4</minColonists>
+      <priority>70</priority>
+      <maxRooms>2</maxRooms>
+      <provides>3</provides>
+      <providesThing>HospitalBed</providesThing>
+    </needCheck>
+    <nearTemplates><li>RH_Bedroom</li></nearTemplates>
   </RoomHelper.RoomTemplateDef>
 
   <!-- ========================== PRISON CELL ========================== -->
@@ -125,6 +167,9 @@
       <li><thingDef>EndTable</thingDef><placement>AlongWall</placement><count>1</count><optional>true</optional></li>
       <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>1</count><optional>true</optional></li>
     </furniture>
+    <!-- Only ever built on request  the architect has no way to know you
+         intend to take prisoners. -->
+    <autoPropose>false</autoPropose>
   </RoomHelper.RoomTemplateDef>
 
   <!-- =========================== STORAGE =========================== -->
@@ -143,6 +188,16 @@
       <li><thingDef>Shelf</thingDef><placement>AlongWall</placement><count>6</count><optional>true</optional></li>
       <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>1</count><optional>true</optional></li>
     </furniture>
+    <needCheck>
+      <satisfiedBy><li>Shelf</li></satisfiedBy>
+      <perColonists>2</perColonists>
+      <minimumCount>4</minimumCount>
+      <priority>75</priority>
+      <maxRooms>3</maxRooms>
+      <provides>6</provides>
+      <providesThing>Shelf</providesThing>
+    </needCheck>
+    <nearTemplates><li>RH_Kitchen</li></nearTemplates>
   </RoomHelper.RoomTemplateDef>
 
   <!-- =========================== REC ROOM =========================== -->
@@ -171,6 +226,16 @@
       </li>
       <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>2</count><optional>true</optional></li>
     </furniture>
+    <needCheck>
+      <satisfiedBy><li>BilliardsTable</li><li>TubeTelevision</li><li>HorseshoesPin</li><li>ChessTable</li></satisfiedBy>
+      <minimumCount>1</minimumCount>
+      <minColonists>3</minColonists>
+      <priority>60</priority>
+      <maxRooms>2</maxRooms>
+      <provides>1</provides>
+      <providesThing>TubeTelevision</providesThing>
+    </needCheck>
+    <nearTemplates><li>RH_DiningRoom</li></nearTemplates>
   </RoomHelper.RoomTemplateDef>
 
   <!-- =========================== WORKSHOP =========================== -->
@@ -200,6 +265,16 @@
       <li><thingDef>ToolCabinet</thingDef><placement>Free</placement><count>1</count><optional>true</optional></li>
       <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>2</count><optional>true</optional></li>
     </furniture>
+    <needCheck>
+      <satisfiedBy><li>TableStonecutter</li><li>ElectricSmithy</li><li>FueledSmithy</li></satisfiedBy>
+      <minimumCount>1</minimumCount>
+      <minColonists>4</minColonists>
+      <priority>65</priority>
+      <maxRooms>2</maxRooms>
+      <provides>1</provides>
+      <providesThing>TableStonecutter</providesThing>
+    </needCheck>
+    <nearTemplates><li>RH_Storage</li></nearTemplates>
   </RoomHelper.RoomTemplateDef>
 
   <!-- ========================= RESEARCH LAB ========================= -->
@@ -224,6 +299,15 @@
       <li><thingDef>Shelf</thingDef><placement>AlongWall</placement><count>1</count><optional>true</optional></li>
       <li><thingDef>StandingLamp</thingDef><placement>Corner</placement><count>1</count><optional>true</optional></li>
     </furniture>
+    <needCheck>
+      <satisfiedBy><li>SimpleResearchBench</li><li>HiTechResearchBench</li></satisfiedBy>
+      <minimumCount>1</minimumCount>
+      <minColonists>3</minColonists>
+      <priority>72</priority>
+      <maxRooms>2</maxRooms>
+      <provides>1</provides>
+      <providesThing>SimpleResearchBench</providesThing>
+    </needCheck>
   </RoomHelper.RoomTemplateDef>
 
 </Defs>

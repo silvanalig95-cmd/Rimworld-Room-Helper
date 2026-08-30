@@ -9,6 +9,7 @@
     <label>room helper</label>
     <order>360</order>
     <specialDesignatorClasses>
+      <li>RoomHelper.Designator_BaseArchitect</li>
       <li>RoomHelper.Designator_PlanRoomMenu</li>
       <li>RoomHelper.Designator_AutoPlaceRoomMenu</li>
     </specialDesignatorClasses>
