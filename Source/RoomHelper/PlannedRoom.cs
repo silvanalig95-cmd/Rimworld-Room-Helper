@@ -36,6 +36,9 @@ namespace RoomHelper
         // Set once the interior pass has run, so furniture is laid out exactly once.
         private bool interiorDone;
 
+        // Set once power has been traced to the room.
+        private bool powerDone;
+
         private RoomTemplateDef templateCache;
 
         public PlannedRoom()
@@ -89,6 +92,7 @@ namespace RoomHelper
             Scribe_Values.Look(ref mountain, "mountain");
             Scribe_Values.Look(ref cellsToMine, "cellsToMine");
             Scribe_Values.Look(ref interiorDone, "interiorDone");
+            Scribe_Values.Look(ref powerDone, "powerDone");
             Scribe_Values.Look(ref reason, "reason");
         }
 
@@ -123,6 +127,14 @@ namespace RoomHelper
                 RoomPlanner.PlaceInterior(Rect, Template, map);
                 RoomPlanner.AddToHomeArea(Rect, map);
                 interiorDone = true;
+            }
+
+            // 4. Run power to it, once there's a room to power. Retried until the
+            //    colony actually has a grid to connect to.
+            if (interiorDone && !powerDone && PowerPlanner.ColonyHasGrid(map))
+            {
+                PowerPlanner.ConnectToGrid(Rect, map);
+                powerDone = true;
             }
 
             if (interiorDone && ShellIsSettled(map))

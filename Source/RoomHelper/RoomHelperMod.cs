@@ -27,6 +27,10 @@ namespace RoomHelper
         // Whether the architect may queue mining to carve rooms out of rock.
         public bool allowMining = true;
 
+        // Whether the architect runs power conduits to each finished room. Only ever
+        // acts once the colony actually has a grid to connect to.
+        public bool planPower = true;
+
         public override void ExposeData()
         {
             base.ExposeData();
@@ -36,6 +40,7 @@ namespace RoomHelper
             Scribe_Values.Look(ref maxPendingProposals, "maxPendingProposals", 1);
             Scribe_Values.Look(ref mountainBias, "mountainBias", 0f);
             Scribe_Values.Look(ref allowMining, "allowMining", true);
+            Scribe_Values.Look(ref planPower, "planPower", true);
         }
     }
 
@@ -79,6 +84,10 @@ namespace RoomHelper
 
             Widgets.CheckboxLabeled(new Rect(inRect.x, y, w, 26f),
                 "Allow carving rooms into rock", ref s.allowMining);
+            y += 30f;
+
+            Widgets.CheckboxLabeled(new Rect(inRect.x, y, w, 26f),
+                "Run power to finished rooms", ref s.planPower);
             y += 36f;
 
             Widgets.Label(new Rect(inRect.x, y, w, 24f),
