@@ -87,9 +87,7 @@ namespace RoomHelper
                     continue;
                 }
 
-                ThingDef stuff = def.MadeFromStuff
-                    ? ResolveStuff(spec.stuff != null ? new List<string> { spec.stuff } : null, def)
-                    : null;
+                ThingDef stuff = ResolveStuff(spec.stuff != null ? new List<string> { spec.stuff } : null, def);
 
                 int placed = 0;
                 foreach ((IntVec3 center, Rot4 rot) in CandidatePlacements(spec, def, interior, lastPlaced))
@@ -197,11 +195,18 @@ namespace RoomHelper
             return null;
         }
 
-        // Picks the first listed material that exists and is actually a stuff usable
-        // for <forDef>; otherwise falls back to the game's default material.
+        // True if the thing must be built from a material (stuff). RimWorld 1.6 has no
+        // ThingDef.MadeFromStuff; a def is stuffable when it declares stuff categories.
+        private static bool IsStuffable(BuildableDef d)
+        {
+            return d != null && d.stuffCategories != null && d.stuffCategories.Count > 0;
+        }
+
+        // Picks the first listed material that exists and is a valid stuff; otherwise
+        // falls back to the game's default material for the thing.
         private static ThingDef ResolveStuff(List<string> candidates, ThingDef forDef)
         {
-            if (forDef == null || !forDef.MadeFromStuff)
+            if (!IsStuffable(forDef))
             {
                 return null;
             }
@@ -210,8 +215,7 @@ namespace RoomHelper
                 foreach (string name in candidates)
                 {
                     ThingDef stuff = DefDatabase<ThingDef>.GetNamedSilentFail(name);
-                    if (stuff != null && stuff.IsStuff && stuff.stuffProps != null
-                        && GenStuff.AllowedStuffsFor(forDef).Contains(stuff))
+                    if (stuff != null && stuff.IsStuff)
                     {
                         return stuff;
                     }

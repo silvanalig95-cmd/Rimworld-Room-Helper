@@ -110,9 +110,8 @@ namespace RoomHelper
             useMouseIcon = true;
         }
 
-        // Drag a 2D rectangle.
-        public override int DraggableDimensions => 2;
-
+        // Designators box-drag by default in RimWorld 1.6; overriding DesignateMultiCell
+        // gives us the whole dragged rectangle at once (a plain click is a 1-cell drag).
         public override AcceptanceReport CanDesignateCell(IntVec3 loc)
         {
             Map map = Find.CurrentMap;
@@ -121,15 +120,6 @@ namespace RoomHelper
                 return false;
             }
             return true;
-        }
-
-        public override void DesignateSingleCell(IntVec3 c)
-        {
-            // A plain click plans a default-sized room centred on the click.
-            int w = Mathf.Max(template.defaultWidth, template.minWidth);
-            int h = Mathf.Max(template.defaultHeight, template.minHeight);
-            CellRect rect = new CellRect(c.x - w / 2, c.z - h / 2, w, h);
-            RoomPlanner.PlaceRoom(rect, template, Find.CurrentMap);
         }
 
         public override void DesignateMultiCell(IEnumerable<IntVec3> cells)
@@ -172,8 +162,6 @@ namespace RoomHelper
             useMouseIcon = true;
         }
 
-        public override int DraggableDimensions => 0;
-
         public override AcceptanceReport CanDesignateCell(IntVec3 loc)
         {
             Map map = Find.CurrentMap;
@@ -184,10 +172,25 @@ namespace RoomHelper
             return true;
         }
 
-        public override void DesignateSingleCell(IntVec3 c)
+        // One click (or a sloppy drag) places a single room. We take the average of the
+        // gesture's cells as the "rough spot" and let the planner find the real location.
+        public override void DesignateMultiCell(IEnumerable<IntVec3> cells)
         {
             Map map = Find.CurrentMap;
-            if (RoomPlanner.TryFindPlacement(c, template, map, out CellRect rect))
+            int n = 0, sx = 0, sz = 0;
+            foreach (IntVec3 c in cells)
+            {
+                sx += c.x;
+                sz += c.z;
+                n++;
+            }
+            if (n == 0)
+            {
+                return;
+            }
+            IntVec3 center = new IntVec3(sx / n, 0, sz / n);
+
+            if (RoomPlanner.TryFindPlacement(center, template, map, out CellRect rect))
             {
                 RoomPlanner.PlaceRoom(rect, template, map);
             }
