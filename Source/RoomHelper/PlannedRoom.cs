@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using RimWorld;
+using UnityEngine;
 using Verse;
 
 namespace RoomHelper
@@ -93,21 +94,26 @@ namespace RoomHelper
 
         // Advances construction as far as the current state of the ground allows.
         // Safe to call repeatedly; every step checks before it places.
-        public void Materialize(Map map)
+        public void Materialize(Map map, BaseArchitect architect)
         {
             if (Template == null || state != RoomPlanState.Approved)
             {
                 return;
             }
 
-            // 1. Mine out anything in the way. Perimeter rock is left standing  in a
-            //    mountain room the natural rock *is* the wall, which is the whole point
-            //    of digging in.
-            DesignateMining(map);
+            // Alongside the way in from outside, every wall shared with a neighbouring
+            // room gets a door, so you can walk the base without stepping outdoors.
+            List<IntVec3> doors = ConnectingDoorCells(architect);
+            doors.Add(doorCell);
 
-            // 2. Walls and door, wherever the ground is free. Cells still holding rock
+            // 1. Mine out anything in the way: the interior, and every doorway.
+            //    Perimeter rock is left standing  in a mountain room the natural rock
+            //    *is* the wall, which is the whole point of digging in.
+            DesignateMining(map, doors);
+
+            // 2. Walls and doors, wherever the ground is free. Cells still holding rock
             //    are simply skipped and picked up on a later pass.
-            RoomPlanner.PlaceShell(Rect, Template, map, doorCell);
+            RoomPlanner.PlaceShell(Rect, Template, map, doors);
 
             // 3. Flooring and furniture, but only once the whole interior is actually
             //    clear  otherwise furniture would crowd into whatever corner happened
@@ -125,9 +131,87 @@ namespace RoomHelper
             }
         }
 
+        // One door per wall shared with another planned room, placed in the middle of
+        // the shared stretch so it links the two interiors.
+        public List<IntVec3> ConnectingDoorCells(BaseArchitect architect)
+        {
+            var doors = new List<IntVec3>();
+            if (architect == null)
+            {
+                return doors;
+            }
+
+            CellRect mine = Rect;
+            CellRect myInterior = Interior;
+
+            foreach (PlannedRoom other in architect.Rooms)
+            {
+                if (other == this || other.Template == null)
+                {
+                    continue;
+                }
+                if (!mine.Overlaps(other.Rect))
+                {
+                    continue;
+                }
+                if (TrySharedDoor(mine, myInterior, other.Rect, other.Interior, out IntVec3 door))
+                {
+                    doors.Add(door);
+                }
+            }
+            return doors;
+        }
+
+        // Where two rectangles share a single line of wall, returns the midpoint of the
+        // stretch over which both interiors actually meet  a door anywhere else on the
+        // shared line would open into a corner rather than into the next room.
+        private static bool TrySharedDoor(CellRect a, CellRect aIn, CellRect b, CellRect bIn,
+            out IntVec3 door)
+        {
+            door = IntVec3.Invalid;
+
+            int x0 = Mathf.Max(a.minX, b.minX);
+            int x1 = Mathf.Min(a.maxX, b.maxX);
+            int z0 = Mathf.Max(a.minZ, b.minZ);
+            int z1 = Mathf.Min(a.maxZ, b.maxZ);
+            if (x1 < x0 || z1 < z0)
+            {
+                return false;
+            }
+
+            if (x0 == x1 && z1 > z0)
+            {
+                // Vertical shared wall.
+                int lo = Mathf.Max(aIn.minZ, bIn.minZ);
+                int hi = Mathf.Min(aIn.maxZ, bIn.maxZ);
+                if (hi < lo)
+                {
+                    return false;
+                }
+                door = new IntVec3(x0, 0, (lo + hi) / 2);
+                return true;
+            }
+
+            if (z0 == z1 && x1 > x0)
+            {
+                // Horizontal shared wall.
+                int lo = Mathf.Max(aIn.minX, bIn.minX);
+                int hi = Mathf.Min(aIn.maxX, bIn.maxX);
+                if (hi < lo)
+                {
+                    return false;
+                }
+                door = new IntVec3((lo + hi) / 2, 0, z0);
+                return true;
+            }
+
+            // Touching only at a corner  nothing to connect.
+            return false;
+        }
+
         // Queues mining for interior rock and for the doorway. Perimeter rock stays
         // as the room's natural wall.
-        private void DesignateMining(Map map)
+        private void DesignateMining(Map map, List<IntVec3> doors)
         {
             if (!RoomHelperMod.Settings.allowMining)
             {
@@ -137,8 +221,7 @@ namespace RoomHelper
             CellRect interior = Interior;
             foreach (IntVec3 c in Rect)
             {
-                bool isInterior = interior.Contains(c);
-                if (!isInterior && c != doorCell)
+                if (!interior.Contains(c) && !doors.Contains(c))
                 {
                     continue;
                 }

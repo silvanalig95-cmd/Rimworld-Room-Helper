@@ -42,8 +42,11 @@ namespace RoomHelper
             }
 
             IntVec3 core = BaseCore(map, architect);
-            int w = Mathf.Max(template.defaultWidth, template.minWidth);
-            int h = Mathf.Max(template.defaultHeight, template.minHeight);
+
+            // A better planner lays out roomier quarters.
+            int bonus = ColonyArchitect.SizeBonus(map);
+            int w = Mathf.Max(template.defaultWidth, template.minWidth) + bonus;
+            int h = Mathf.Max(template.defaultHeight, template.minHeight) + bonus;
 
             bool found = false;
             int scored = 0;
@@ -86,9 +89,10 @@ namespace RoomHelper
                 return false;
             }
 
-            // Don't build on top of, or flush against, something the architect already
-            // planned  leave a one-cell gap so rooms stay separately reachable.
-            if (architect != null && architect.AnyPlannedRoomOverlaps(rect.ExpandedBy(1)))
+            // Rooms are allowed  encouraged  to sit flush against each other and
+            // share a wall. What's rejected is a genuine overlap, or a one-cell gap.
+            int sharedWallCells = 0;
+            if (architect != null && !architect.CanPlaceRectAmongRooms(rect, out sharedWallCells))
             {
                 return false;
             }
@@ -185,9 +189,12 @@ namespace RoomHelper
             // ------------------------------------------------------------- scoring
             float score = 100f;
 
-            // Compactness: a base that sprawls is a base that walks. This is the
-            // dominant term, which is what keeps rooms clustered into a real base
-            // instead of scattered huts.
+            // Sharing a wall with what's already planned is the strongest signal that
+            // this site is part of the base rather than merely near it. Weighted above
+            // everything else so the architect grows one connected building.
+            score += Mathf.Min(sharedWallCells, 14) * 6f;
+
+            // Compactness: a base that sprawls is a base that walks.
             float distToCore = IntVec3Utility.DistanceTo(rect.CenterCell, core);
             score -= distToCore * 1.6f;
 

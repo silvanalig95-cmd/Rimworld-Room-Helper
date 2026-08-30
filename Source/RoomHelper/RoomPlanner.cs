@@ -54,17 +54,23 @@ namespace RoomHelper
             }
 
             IntVec3 doorCell = ChooseDoorCell(rect, map);
-            PlanResult result = PlaceShell(rect, template, map, doorCell);
+            PlanResult result = PlaceShell(rect, template, map, new[] { doorCell });
             result.Add(PlaceInterior(rect, template, map));
             AddToHomeArea(rect, map);
 
             AnnounceResult(result, template);
         }
 
-        // Walls around the perimeter plus one door. Cells that already hold something
-        // (including natural rock, which serves as the wall of a mountain room) are
-        // skipped, so this is safe to call repeatedly as a room gets dug out.
-        public static PlanResult PlaceShell(CellRect rect, RoomTemplateDef template, Map map, IntVec3 doorCell)
+        // Walls around the perimeter, with a door at each of <doorCells>. Cells that
+        // already hold something (including natural rock, which serves as the wall of a
+        // mountain room) are skipped, so this is safe to call repeatedly as a room gets
+        // dug out.
+        //
+        // More than one door matters once rooms share walls: besides the way in from
+        // outside, each wall shared with a neighbouring room gets a connecting door, so
+        // the base reads as one building instead of a terrace of sheds.
+        public static PlanResult PlaceShell(CellRect rect, RoomTemplateDef template, Map map,
+            ICollection<IntVec3> doorCells)
         {
             var result = new PlanResult();
             Faction faction = Faction.OfPlayer;
@@ -74,7 +80,7 @@ namespace RoomHelper
 
             foreach (IntVec3 cell in rect.EdgeCells)
             {
-                if (cell == doorCell)
+                if (doorCells.Contains(cell))
                 {
                     continue;
                 }
@@ -86,12 +92,44 @@ namespace RoomHelper
 
             ThingDef doorDef = ThingDefOf.Door;
             ThingDef doorStuff = ResolveStuff(template.doorStuff, doorDef);
-            if (TryPlaceBuilding(doorDef, doorCell, Rot4.North, doorStuff, map, faction))
+            foreach (IntVec3 cell in doorCells)
             {
-                result.doors++;
+                bool onEdge = cell.x == rect.minX || cell.x == rect.maxX
+                              || cell.z == rect.minZ || cell.z == rect.maxZ;
+                if (!onEdge || !cell.InBounds(map))
+                {
+                    continue;
+                }
+                // A neighbouring room planned earlier may already have queued a wall
+                // here. Cancelling an un-built blueprint costs nothing and is what lets
+                // two rooms planned at different times still end up connected.
+                ClearWallBlueprintAt(map, cell);
+                if (TryPlaceBuilding(doorDef, cell, Rot4.North, doorStuff, map, faction))
+                {
+                    result.doors++;
+                }
             }
 
             return result;
+        }
+
+        // Cancels an un-built building blueprint at <cell> so a door can go there.
+        // Only blueprints are touched  anything already constructed is left alone.
+        private static void ClearWallBlueprintAt(Map map, IntVec3 cell)
+        {
+            Thing[] snapshot = map.thingGrid.ThingsListAtFast(cell).ToArray();
+            foreach (Thing t in snapshot)
+            {
+                if (t.Destroyed)
+                {
+                    continue;
+                }
+                // Floor blueprints build a TerrainDef; leave those be.
+                if (t.def.IsBlueprint && t.def.entityDefToBuild is ThingDef)
+                {
+                    t.Destroy(DestroyMode.Cancel);
+                }
+            }
         }
 
         // Flooring and furniture inside the room. Assumes the interior is already

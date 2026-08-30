@@ -59,7 +59,7 @@ namespace RoomHelper
             {
                 for (int i = 0; i < rooms.Count; i++)
                 {
-                    rooms[i].Materialize(map);
+                    rooms[i].Materialize(map, this);
                 }
             }
 
@@ -128,12 +128,18 @@ namespace RoomHelper
                 ? $"carved into the rock ({room.cellsToMine} cells to mine out)"
                 : "on open ground";
 
+            string planner = ColonyArchitect.PlannerName(map);
+            string opening = planner.NullOrEmpty()
+                ? $"Your colonists have drawn up plans for a {room.Label}."
+                : $"{planner} has drawn up plans for a {room.Label}.";
+
             string text =
-                $"Your colonists suggest building a {room.Label}.\n\n" +
+                opening + "\n\n" +
                 $"Why: {need.reason}\n" +
-                $"Where: {where}, {SiteDescription(room)}.\n\n" +
+                $"Where: {where}, {SiteDescription(room)}.\n" +
+                $"Size: {room.Rect.Width} x {room.Rect.Height}.\n\n" +
                 "The proposed outline is marked on the map. Open the Base architect window " +
-                "(Architect menu → Room Helper) to approve or dismiss it.";
+                "(Architect menu → Room Helper) to approve, move or dismiss it.";
 
             Find.LetterStack.ReceiveLetter(
                 $"Proposed: {room.Label}",
@@ -154,7 +160,7 @@ namespace RoomHelper
         public void Approve(PlannedRoom room)
         {
             room.state = RoomPlanState.Approved;
-            room.Materialize(map);
+            room.Materialize(map, this);
         }
 
         public void Reject(PlannedRoom room)
@@ -219,6 +225,56 @@ namespace RoomHelper
                 }
             }
             return false;
+        }
+
+        // Decides whether <rect> can coexist with the rooms already planned, and
+        // reports how many wall cells it would share with them.
+        //
+        // Sharing a wall is not merely tolerated, it's the goal: two rooms flush
+        // against each other is what turns a scattering of huts into a building. What
+        // is rejected is a room whose wall would intrude on another room's interior,
+        // and a room sitting exactly one cell away  that leaves a dead strip nobody
+        // can use or reach.
+        public bool CanPlaceRectAmongRooms(CellRect rect, out int sharedWallCells)
+        {
+            sharedWallCells = 0;
+            CellRect interior = rect.ContractedBy(1);
+
+            for (int i = 0; i < rooms.Count; i++)
+            {
+                CellRect other = rooms[i].Rect;
+
+                if (rect.Overlaps(other))
+                {
+                    // Neither room's wall band may sit inside the other's interior.
+                    if (rect.Overlaps(other.ContractedBy(1)) || other.Overlaps(interior))
+                    {
+                        sharedWallCells = 0;
+                        return false;
+                    }
+                    sharedWallCells += IntersectionArea(rect, other);
+                }
+                else if (rect.ExpandedBy(1).Overlaps(other))
+                {
+                    sharedWallCells = 0;
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Number of cells two rectangles have in common (0 if they don't touch).
+        public static int IntersectionArea(CellRect a, CellRect b)
+        {
+            int x0 = Mathf.Max(a.minX, b.minX);
+            int x1 = Mathf.Min(a.maxX, b.maxX);
+            int z0 = Mathf.Max(a.minZ, b.minZ);
+            int z1 = Mathf.Min(a.maxZ, b.maxZ);
+            if (x1 < x0 || z1 < z0)
+            {
+                return 0;
+            }
+            return (x1 - x0 + 1) * (z1 - z0 + 1);
         }
 
         // Total contribution of every planned room toward the given set of thing
